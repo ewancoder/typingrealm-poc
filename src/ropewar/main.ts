@@ -7,7 +7,7 @@
 
 import { Connection } from './connection.js';
 import { initLobby, handleLobbyMessage, resetLobby, getMyName, getPlayers, getLanguage } from './lobby.js';
-import { initGame, destroyGame, handleGameMessage, getMatchData } from './game.js';
+import { initGame, destroyGame, handleGameMessage, getMatchData, startMusic, fadeOutMusic } from './game.js';
 import { triggerFall, triggerCelebrate } from './sprite-renderer.js';
 import { showStats } from './stats-screen.js';
 import type { ServerMessage } from '../shared/protocol.js';
@@ -22,6 +22,14 @@ const backToLobbyBtn = document.getElementById('back-to-lobby-btn') as HTMLButto
 
 let currentScreen: Screen = 'lobby';
 const connection = new Connection();
+
+const hurtSound = new Audio('/hurt.mp3');
+const winSound = new Audio('/win.mp3');
+
+function playSound(sound: HTMLAudioElement): void {
+    sound.currentTime = 0;
+    sound.play().catch(() => { /* autoplay blocked */ });
+}
 
 function switchScreen(screen: Screen): void {
     currentScreen = screen;
@@ -39,9 +47,12 @@ function handleMessage(msg: ServerMessage): void {
         case 'game_started':
             switchScreen('game');
             initGame(msg.text, connection, getMyName(), getPlayers(), getLanguage());
+            startMusic();
             break;
 
         case 'game_over': {
+            fadeOutMusic();
+            playSound(winSound);
             const loser = msg.winner === 'a' ? 'b' : 'a';
             triggerFall(loser);
             triggerCelebrate(msg.winner);
@@ -52,9 +63,14 @@ function handleMessage(msg: ServerMessage): void {
 
         case 'rope_update':
         case 'next_text':
-        case 'player_stumbled_broadcast':
-            // These only matter during the game.
             if (currentScreen === 'game') {
+                handleGameMessage(msg);
+            }
+            break;
+
+        case 'player_stumbled_broadcast':
+            if (currentScreen === 'game') {
+                playSound(hurtSound);
                 handleGameMessage(msg);
             }
             break;

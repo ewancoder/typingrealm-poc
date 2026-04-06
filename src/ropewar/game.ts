@@ -40,6 +40,39 @@ import {
 import type { ServerMessage, PlayerInfo } from '../shared/protocol.js';
 
 const STUN_DURATION_MS = 5000;
+const FADE_DURATION_MS = 2000;
+
+const battleMusic = new Audio('/battle.mp3');
+battleMusic.loop = true;
+battleMusic.volume = 0.5;
+let musicFadeInterval: ReturnType<typeof setInterval> | null = null;
+
+export function startMusic(): void {
+    if (musicFadeInterval) {
+        clearInterval(musicFadeInterval);
+        musicFadeInterval = null;
+    }
+    battleMusic.volume = 0.5;
+    battleMusic.currentTime = 0;
+    battleMusic.play().catch(() => { /* autoplay blocked — ignore */ });
+}
+
+export function fadeOutMusic(): void {
+    if (battleMusic.paused) return;
+    const step = 50;
+    const decrement = battleMusic.volume / (FADE_DURATION_MS / step);
+    musicFadeInterval = setInterval(() => {
+        battleMusic.volume = Math.max(0, battleMusic.volume - decrement);
+        if (battleMusic.volume <= 0) {
+            battleMusic.pause();
+            battleMusic.currentTime = 0;
+            if (musicFadeInterval) {
+                clearInterval(musicFadeInterval);
+                musicFadeInterval = null;
+            }
+        }
+    }, step);
+}
 
 let state: TypingState | null = null;
 let renderer: DomRendererHandle | null = null;

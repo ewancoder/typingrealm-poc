@@ -6,7 +6,10 @@
       "Bash(perl:*)",
       "Bash(npm install:*)",
       "Bash(ls /mnt/data/home/projects/tyr/sprites/*.png)",
-      "Bash(cp:*)"
+      "Bash(cp:*)",
+      "Bash(ls /mnt/data/home/projects/tyr/*.mp3 /mnt/data/home/projects/tyr/*.png)",
+      "Bash(ls /mnt/data/home/projects/tyr/*.png /mnt/data/home/projects/tyr/blue_*.png /mnt/data/home/projects/tyr/red_*.png)",
+      "Bash(ls:*)"
     ]
   }
 }
