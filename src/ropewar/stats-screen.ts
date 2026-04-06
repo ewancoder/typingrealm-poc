@@ -4,7 +4,7 @@
 
 import type { MatchStats, TeamStats } from '../shared/protocol.js';
 import type { SessionAnalytics } from '../layer3/types.js';
-import type { TypeableUnit } from '../layer1/types.js';
+import type { TypeableUnit, GlyphGroup } from '../layer1/types.js';
 import type { KeystrokeInput } from '../layer0/keystroke-capture.js';
 import { walkPresses } from '../layer3/press-walk.js';
 import { buildBigramContexts, renderStatsHtml } from '../layer3/stats-renderer.js';
@@ -51,6 +51,7 @@ export interface PersonalMatchData {
     analytics: SessionAnalytics;
     events: readonly KeystrokeInput[];
     sequences: readonly TypeableUnit[];
+    glyphGroups: readonly GlyphGroup[];
     sourceTexts: readonly string[];
     pausePeriods: readonly PausePeriod[];
 }
@@ -70,7 +71,7 @@ export function showStats(winner: 'a' | 'b', stats: MatchStats, personal?: Perso
         let personalHtml = '';
 
         if (personal) {
-            const { analytics, events, sequences, sourceTexts } = personal;
+            const { analytics, events, sequences, glyphGroups, sourceTexts } = personal;
             const mergedSourceText = sourceTexts.join(' ');
 
             // Build timing contexts with position-based filtering
@@ -92,7 +93,7 @@ export function showStats(winner: 'a' | 'b', stats: MatchStats, personal?: Perso
             const timingContexts = buildBigramContexts(
                 mergedSourceText,
                 sequences,
-                [],
+                glyphGroups,
                 (i) => {
                     const dt = positionDelta[i];
                     if (dt === null) return false;
@@ -105,7 +106,7 @@ export function showStats(winner: 'a' | 'b', stats: MatchStats, personal?: Perso
             const errorContexts = buildBigramContexts(
                 mergedSourceText,
                 sequences,
-                [],
+                glyphGroups,
                 (i) => sequences[i].everFailed,
             );
 

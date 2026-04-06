@@ -6,7 +6,7 @@
  */
 
 import { Connection } from './connection.js';
-import { initLobby, handleLobbyMessage, resetLobby, getMyName, getPlayers } from './lobby.js';
+import { initLobby, handleLobbyMessage, resetLobby, getMyName, getPlayers, getLanguage } from './lobby.js';
 import { initGame, destroyGame, handleGameMessage, getMatchData } from './game.js';
 import { triggerFall, triggerCelebrate } from './sprite-renderer.js';
 import { showStats } from './stats-screen.js';
@@ -38,7 +38,7 @@ function handleMessage(msg: ServerMessage): void {
     switch (msg.type) {
         case 'game_started':
             switchScreen('game');
-            initGame(msg.text, connection, getMyName(), getPlayers());
+            initGame(msg.text, connection, getMyName(), getPlayers(), getLanguage());
             break;
 
         case 'game_over': {

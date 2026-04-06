@@ -42,6 +42,7 @@ const botAToggle = document.getElementById('bot-a-toggle') as HTMLInputElement;
 const botBToggle = document.getElementById('bot-b-toggle') as HTMLInputElement;
 const botAWpm = document.getElementById('bot-a-wpm') as HTMLInputElement;
 const botBWpm = document.getElementById('bot-b-wpm') as HTMLInputElement;
+const languageSelect = document.getElementById('language-select') as HTMLSelectElement;
 
 function getPlayerName(): string {
     return playerNameInput.value.trim() || 'Player';
@@ -205,6 +206,10 @@ export function getMyName(): string {
 
 export function getPlayers(): PlayerInfo[] {
     return lobbyState.players;
+}
+
+export function getLanguage(): 'english' | 'kanji' {
+    return languageSelect.value as 'english' | 'kanji';
 }
 
 export function resetLobby(): void {

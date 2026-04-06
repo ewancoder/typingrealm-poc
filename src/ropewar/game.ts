@@ -16,12 +16,14 @@ import {
     pauseInput,
     resumeInput,
 } from '../layer1/typing-state-machine.js';
-import type { TypingState } from '../layer1/types.js';
+import type { TypingState, GlyphGroup } from '../layer1/types.js';
 import { mountDomRenderer } from '../layer2/dom-renderer.js';
 import type { DomRendererHandle } from '../layer2/dom-renderer.js';
 import type { TypeableUnit } from '../layer1/types.js';
 import type { PersonalMatchData } from './stats-screen.js';
 import { latinTextProvider } from '../text-providers/latin-text-provider.js';
+import { cjkTextProvider } from '../text-providers/cjk-text-provider.js';
+import { japaneseSentenceAt, japaneseSentenceSourceText, japaneseSentenceCount } from '../text-providers/japanese-data.js';
 import { cloneUnit } from '../layer1/helpers.js';
 import { computeAnalytics } from '../layer3/analytics.js';
 import type { Connection } from './connection.js';
@@ -46,22 +48,36 @@ let connection: Connection | null = null;
 let stunTimer: ReturnType<typeof setTimeout> | null = null;
 let myName = '';
 let spriteReady = false;
+let currentLanguage: 'english' | 'kanji' = 'english';
 
 // Accumulated data across multiple texts for post-match analytics
 let allEvents: KeystrokeInput[] = [];
 let allSequences: TypeableUnit[] = [];
+let allGlyphGroups: GlyphGroup[] = [];
 let allSourceTexts: string[] = [];
 let gameStartPerf: number | null = null;
 let pausePeriods: { start: number; end: number }[] = [];
 let currentPauseStart: number | null = null;
 
 const typingArea = document.getElementById('typing-area') as HTMLElement;
+let japaneseSentenceIndex = 0;
+let currentGlyphGroups: GlyphGroup[] = [];
+
 function setupSession(text: string): void {
-    const generated = latinTextProvider.generateSequence(text);
+    let generated;
+    if (currentLanguage === 'kanji') {
+        const idx = japaneseSentenceIndex % japaneseSentenceCount();
+        japaneseSentenceIndex++;
+        generated = cjkTextProvider.generateSequence(japaneseSentenceAt('kanji', idx));
+        allSourceTexts.push(japaneseSentenceSourceText('kanji', idx));
+    } else {
+        generated = latinTextProvider.generateSequence(text);
+        allSourceTexts.push(text);
+    }
+    currentGlyphGroups = generated.glyphGroups;
     state = createInitialState(generated.sequence, generated.glyphGroups, {
         advanceOnError: false,
     });
-    allSourceTexts.push(text);
     renderer = mountDomRenderer(typingArea, generated.sequence, generated.glyphGroups);
 }
 
@@ -130,9 +146,18 @@ function handleKeystroke(input: KeystrokeInput): void {
                 break;
 
             case 'finished':
-                // Save completed sequence for merged analytics
+                // Save completed sequence + glyph groups for merged analytics.
+                // Offset glyphGroupIds so they remain unique across texts.
                 if (state) {
-                    allSequences.push(...state.sequence);
+                    const offset = allGlyphGroups.length;
+                    for (const unit of state.sequence) {
+                        const clone = { ...unit };
+                        if (clone.glyphGroupId !== null) {
+                            clone.glyphGroupId = clone.glyphGroupId + offset;
+                        }
+                        allSequences.push(clone);
+                    }
+                    allGlyphGroups.push(...currentGlyphGroups);
                 }
                 connection.send({ type: 'text_completed' });
                 break;
@@ -175,11 +200,14 @@ export function handleGameMessage(msg: ServerMessage): void {
     }
 }
 
-export function initGame(text: string, conn: Connection, playerName: string, playerList: PlayerInfo[]): void {
+export function initGame(text: string, conn: Connection, playerName: string, playerList: PlayerInfo[], language: 'english' | 'kanji'): void {
     connection = conn;
     myName = playerName;
+    currentLanguage = language;
+    japaneseSentenceIndex = Math.floor(Math.random() * japaneseSentenceCount());
     allEvents = [];
     allSequences = [];
+    allGlyphGroups = [];
     allSourceTexts = [];
     gameStartPerf = null;
     pausePeriods = [];
@@ -207,10 +235,21 @@ export function initGame(text: string, conn: Connection, playerName: string, pla
 export function getMatchData(): PersonalMatchData | null {
     if (allEvents.length === 0 || gameStartPerf === null) return null;
 
-    // Include the current (possibly incomplete) text's sequence
-    const sequences = state
-        ? [...allSequences, ...state.sequence]
-        : allSequences;
+    // Include the current (possibly incomplete) text's sequence + glyph groups
+    let sequences: TypeableUnit[];
+    let glyphGroups: GlyphGroup[];
+    if (state) {
+        const offset = allGlyphGroups.length;
+        const currentSeq = state.sequence.map((unit) => {
+            if (unit.glyphGroupId === null) return unit;
+            return { ...unit, glyphGroupId: unit.glyphGroupId + offset };
+        });
+        sequences = [...allSequences, ...currentSeq];
+        glyphGroups = [...allGlyphGroups, ...currentGlyphGroups];
+    } else {
+        sequences = allSequences;
+        glyphGroups = allGlyphGroups;
+    }
 
     if (sequences.length === 0) return null;
 
@@ -221,6 +260,7 @@ export function getMatchData(): PersonalMatchData | null {
         analytics,
         events: allEvents,
         sequences,
+        glyphGroups,
         sourceTexts: allSourceTexts,
         pausePeriods,
     };

@@ -62,7 +62,7 @@ h3 {
   letter-spacing: 0.05em;
 }
 
-input, button {
+input, button, select {
   background: #272730;
   color: var(--fg);
   border: 1px solid #3a3a45;
