@@ -1,0 +1,387 @@
+:root {
+  --bg: #1a1a1f;
+  --fg: #e8e8ec;
+  --muted: #6e6e78;
+  --cursor: #63a4ff;
+  --correct: #7fdc8f;
+  --wrong: #ff6b6b;
+  --corrected: #f0a65c;
+  --accent: #63a4ff;
+  --team-a: #63a4ff;
+  --team-b: #ff6b6b;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: 'Fira Code', 'Cascadia Code', ui-monospace, Menlo, monospace;
+}
+
+main {
+  max-width: 960px;
+  min-height: 100%;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.hidden {
+  display: none;
+}
+
+h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--accent);
+  margin: 0 0 1.5rem;
+  text-align: center;
+}
+
+h2 {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--accent);
+  margin: 0 0 1rem;
+}
+
+h3 {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--muted);
+  margin: 0 0 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+input, button {
+  background: #272730;
+  color: var(--fg);
+  border: 1px solid #3a3a45;
+  padding: 0.5rem 0.8rem;
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+input {
+  cursor: text;
+}
+
+input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+button:hover {
+  border-color: var(--accent);
+}
+
+button:active {
+  background: #2e2e38;
+}
+
+/* ── Lobby ── */
+
+.room-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.room-actions input {
+  width: 14rem;
+  text-align: center;
+}
+
+.room-code {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 0.25em;
+  text-align: center;
+  margin: 1rem 0;
+}
+
+.teams {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  margin: 1.5rem 0;
+}
+
+.team {
+  display: flex;
+  flex-direction: column;
+  min-width: 200px;
+  background: #20202a;
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+}
+
+.team-a h3 {
+  color: var(--team-a);
+}
+
+.team-b h3 {
+  color: var(--team-b);
+}
+
+.team ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.team li {
+  padding: 0.25rem 0;
+  font-size: 0.9rem;
+}
+
+.modifier-row {
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.modifier-row input {
+  width: 4rem;
+  text-align: center;
+  font-size: 0.85rem;
+  padding: 0.25rem 0.4rem;
+}
+
+.bot-row {
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.bot-row input[type="number"] {
+  width: 4rem;
+  text-align: center;
+  font-size: 0.85rem;
+  padding: 0.25rem 0.4rem;
+}
+
+.team-btn {
+  margin-top: 0.75rem;
+  width: 100%;
+}
+
+.start-btn {
+  display: block;
+  margin: 1.5rem auto 0;
+  padding: 0.6rem 2rem;
+  font-size: 1rem;
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.start-btn:hover {
+  background: rgba(99, 164, 255, 0.1);
+}
+
+/* ── Game ── */
+
+#rope-container {
+  width: 100%;
+  margin-bottom: 1.5rem;
+}
+
+#rope-track {
+  position: relative;
+  height: 12px;
+  background: #2a2a34;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+#rope-marker {
+  position: absolute;
+  width: 8px;
+  height: 24px;
+  background: #ffffff;
+  border-radius: 4px;
+  top: 50%;
+  left: 50%;
+  transform: translateY(-50%);
+  transition: left 300ms ease-out;
+}
+
+.rope-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  margin-top: 0.35rem;
+}
+
+.team-a-label {
+  color: var(--team-a);
+}
+
+.team-b-label {
+  color: var(--team-b);
+}
+
+.typing-area {
+  position: relative;
+  font-size: 1.9rem;
+  line-height: 1.8;
+  letter-spacing: 0.02em;
+  padding: 2rem;
+  background: #20202a;
+  border-radius: 8px;
+  min-height: 4rem;
+  color: var(--muted);
+  outline: none;
+  user-select: none;
+}
+
+.typing-area .ch {
+  position: relative;
+  transition: color 80ms;
+}
+
+.typing-area .ch.cursor {
+  color: var(--fg);
+  background: rgba(99, 164, 255, 0.15);
+  border-bottom: 2px solid var(--cursor);
+}
+
+.typing-area .ch.typed {
+  color: var(--correct);
+}
+
+.typing-area .ch.wrong {
+  color: var(--wrong);
+  background: rgba(255, 107, 107, 0.15);
+}
+
+.typing-area .ch.corrected {
+  color: var(--corrected);
+}
+
+.typing-area.finished {
+  opacity: 0.6;
+}
+
+/* CJK glyph layout */
+.typing-area .glyph {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 0.2rem 0.4rem;
+  vertical-align: top;
+}
+
+.typing-area .glyph-native {
+  font-size: 2.2rem;
+  line-height: 1;
+  color: var(--muted);
+  transition: color 120ms;
+}
+
+.typing-area .glyph-native.glyph-active {
+  color: var(--accent);
+}
+
+.typing-area .glyph-native.glyph-done {
+  color: var(--correct);
+}
+
+.typing-area .glyph-native.glyph-corrected {
+  color: var(--corrected);
+}
+
+.typing-area .glyph-native.glyph-wrong {
+  color: var(--wrong);
+}
+
+.typing-area .glyph-romaji {
+  display: inline-flex;
+  font-size: 0.85rem;
+  margin-top: 0.15rem;
+  color: var(--muted);
+}
+
+/* ── Game screen ── */
+
+#game-screen {
+  position: relative;
+}
+
+/* ── Stats ── */
+
+#stats-screen {
+  text-align: center;
+}
+
+.winner-text {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin: 1rem 0 2rem;
+}
+
+.winner-text.team-a-wins {
+  color: var(--team-a);
+}
+
+.winner-text.team-b-wins {
+  color: var(--team-b);
+}
+
+.match-stats {
+  background: #20202a;
+  border-radius: 8px;
+  padding: 1.5rem 2rem;
+  margin: 0 auto 1.5rem;
+  max-width: 480px;
+  text-align: left;
+}
+
+.match-stats h2 {
+  margin: 0 0 1rem;
+}
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.35rem 0;
+  border-bottom: 1px solid #2e2e38;
+  font-size: 0.95rem;
+}
+
+.stat-row:last-child {
+  border-bottom: none;
+}
+
+.stat-label {
+  color: var(--muted);
+}
+
+.stat-value {
+  color: var(--fg);
+  font-weight: 500;
+}
+
+.stats-buttons {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  margin-top: 1.5rem;
+}

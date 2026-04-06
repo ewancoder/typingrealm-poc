@@ -1,0 +1,234 @@
+:root {
+  --bg: #1a1a1f;
+  --fg: #e8e8ec;
+  --muted: #6e6e78;
+  --cursor: #63a4ff;
+  --correct: #7fdc8f;
+  --wrong: #ff6b6b;
+  --corrected: #f0a65c;
+  --accent: #63a4ff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: 'Fira Code', 'Cascadia Code', ui-monospace, Menlo, monospace;
+}
+
+main {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+header h1 {
+  font-size: 1.25rem;
+  font-weight: 500;
+  margin: 0;
+  color: var(--muted);
+}
+
+.controls {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.controls select,
+.controls button {
+  background: #272730;
+  color: var(--fg);
+  border: 1px solid #3a3a45;
+  padding: 0.4rem 0.7rem;
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.controls button:hover {
+  border-color: var(--accent);
+}
+
+.kana-toggle,
+.romaji-toggle {
+  font-size: 0.9rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.kana-toggle.hidden,
+.romaji-toggle.hidden,
+.replay-speed.hidden,
+button.hidden {
+  display: none;
+}
+
+.typing-area.hide-romaji .glyph-romaji {
+  visibility: hidden;
+}
+
+.typing-area {
+  font-size: 1.9rem;
+  line-height: 1.8;
+  letter-spacing: 0.02em;
+  padding: 2rem;
+  background: #20202a;
+  border-radius: 8px;
+  min-height: 4rem;
+  color: var(--muted);
+  outline: none;
+  user-select: none;
+}
+
+.typing-area canvas {
+  display: block;
+  width: 100%;
+  border-radius: 4px;
+}
+
+.typing-area .ch {
+  position: relative;
+  transition: color 80ms;
+}
+
+.typing-area .ch.cursor {
+  color: var(--fg);
+  background: rgba(99, 164, 255, 0.15);
+  border-bottom: 2px solid var(--cursor);
+}
+
+.typing-area .ch.typed {
+  color: var(--correct);
+}
+
+.typing-area .ch.wrong {
+  color: var(--wrong);
+  background: rgba(255, 107, 107, 0.15);
+}
+
+.typing-area .ch.corrected {
+  color: var(--corrected);
+}
+
+.typing-area.finished {
+  opacity: 0.6;
+}
+
+/* CJK glyph layout */
+.typing-area .glyph {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 0.2rem 0.4rem;
+  vertical-align: top;
+}
+
+.typing-area .glyph-native {
+  font-size: 2.2rem;
+  line-height: 1;
+  color: var(--muted);
+  transition: color 120ms;
+}
+
+.typing-area .glyph-native.glyph-active {
+  color: var(--accent);
+}
+
+.typing-area .glyph-native.glyph-done {
+  color: var(--correct);
+}
+
+.typing-area .glyph-native.glyph-corrected {
+  color: var(--corrected);
+}
+
+.typing-area .glyph-native.glyph-wrong {
+  color: var(--wrong);
+}
+
+.typing-area .glyph-romaji {
+  display: inline-flex;
+  font-size: 0.85rem;
+  margin-top: 0.15rem;
+  color: var(--muted);
+}
+
+/* Stats panel */
+.stats {
+  margin-top: 2rem;
+  padding: 1.5rem 2rem;
+  background: #20202a;
+  border-radius: 8px;
+  display: none;
+}
+
+.stats.visible {
+  display: block;
+}
+
+.stats h2 {
+  margin: 0 0 1rem;
+  font-size: 1rem;
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.stats h3 {
+  margin: 1.2rem 0 0.5rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.stats .stat-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.3rem 0;
+  border-bottom: 1px solid #2e2e38;
+  font-size: 0.95rem;
+}
+
+.stats ul {
+  margin: 0;
+  padding-left: 1.2rem;
+  font-size: 0.9rem;
+}
+
+.stats li {
+  padding: 0.15rem 0;
+}
+
+.stats .context {
+  color: var(--muted);
+  font-size: 0.85em;
+}
+
+.stats .context mark {
+  background: none;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.stats code {
+  background: #2a2a34;
+  padding: 0.1rem 0.35rem;
+  border-radius: 3px;
+  font-family: inherit;
+  color: var(--fg);
+}

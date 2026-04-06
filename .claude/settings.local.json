@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx -y -p typescript@5.4 tsc --noEmit)",
+      "Bash(npx tsc:*)",
+      "Bash(perl:*)",
+      "Bash(npm install:*)",
+      "Bash(ls /mnt/data/home/projects/tyr/sprites/*.png)",
+      "Bash(cp:*)"
+    ]
+  }
+}

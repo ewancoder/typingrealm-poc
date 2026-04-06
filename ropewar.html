@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TypingRealm — Rope War</title>
+  <link rel="stylesheet" href="/ropewar.css" />
+</head>
+<body>
+  <main>
+    <!-- Lobby screen -->
+    <section id="lobby-screen">
+      <h1>Rope War</h1>
+      <div id="name-input-area">
+        <input id="server-address" type="text" value="batumi.typingrealm.org" />
+        <input id="player-name" type="text" placeholder="Your name" maxlength="20" />
+      </div>
+      <div id="room-actions">
+        <button id="create-room-btn" type="button">Create Room</button>
+        <div>
+          <input id="room-code-input" type="text" placeholder="Room code" maxlength="4" />
+          <button id="join-room-btn" type="button">Join Room</button>
+        </div>
+      </div>
+      <div id="room-info" class="hidden">
+        <div>Room: <strong id="room-code-display"></strong></div>
+        <div class="teams">
+          <div class="team team-a">
+            <h3>Team A</h3>
+            <ul id="team-a-list"></ul>
+            <div id="modifier-a-row" class="modifier-row hidden">
+              <label>Modifier: <input id="modifier-a" type="number" step="0.1" min="0.1" value="1" /></label>
+            </div>
+            <div id="bot-a-row" class="bot-row hidden">
+              <label><input id="bot-a-toggle" type="checkbox" /> Bot</label>
+              <label class="bot-wpm-label">WPM: <input id="bot-a-wpm" type="number" min="1" value="30" /></label>
+            </div>
+            <button id="join-team-a" type="button" class="team-btn">Join Team A</button>
+          </div>
+          <div class="team team-b">
+            <h3>Team B</h3>
+            <ul id="team-b-list"></ul>
+            <div id="modifier-b-row" class="modifier-row hidden">
+              <label>Modifier: <input id="modifier-b" type="number" step="0.1" min="0.1" value="1" /></label>
+            </div>
+            <div id="bot-b-row" class="bot-row hidden">
+              <label><input id="bot-b-toggle" type="checkbox" /> Bot</label>
+              <label class="bot-wpm-label">WPM: <input id="bot-b-wpm" type="number" min="1" value="30" /></label>
+            </div>
+            <button id="join-team-b" type="button" class="team-btn">Join Team B</button>
+          </div>
+        </div>
+        <button id="start-game-btn" type="button" class="hidden">Start Game</button>
+      </div>
+    </section>
+
+    <!-- Game screen -->
+    <section id="game-screen" class="hidden">
+      <div id="rope-container">
+        <div id="rope-track">
+          <div id="rope-marker"></div>
+        </div>
+        <div class="rope-labels">
+          <span class="team-a-label">Team A</span>
+          <span class="team-b-label">Team B</span>
+        </div>
+      </div>
+      <section id="typing-area" class="typing-area"></section>
+    </section>
+
+    <!-- Stats screen -->
+    <section id="stats-screen" class="hidden">
+      <h2 id="winner-text"></h2>
+      <div id="match-stats"></div>
+      <button id="play-again-btn" type="button">Play Again</button>
+      <button id="back-to-lobby-btn" type="button">Back to Lobby</button>
+    </section>
+  </main>
+
+  <script type="module" src="/src/ropewar/main.ts"></script>
+</body>
+</html>

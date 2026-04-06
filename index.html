@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TypingRealm — Engine POC</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main>
+      <header>
+        <h1>TypingRealm — Engine POC</h1>
+        <div class="controls">
+          <label>
+            Mode:
+            <select id="mode">
+              <option value="latin">English (Latin)</option>
+              <option value="hiragana">Japanese — Hiragana (ひらがな)</option>
+              <option value="kanji">Japanese — Kanji (漢字)</option>
+              <option value="chinese">Chinese — Pinyin (拼音)</option>
+              <option value="russian">Russian (Русский)</option>
+            </select>
+          </label>
+          <label id="kana-toggle" class="kana-toggle hidden">
+            <input id="use-katakana" type="checkbox" />
+            Katakana (カタカナ)
+          </label>
+          <label id="romaji-toggle" class="romaji-toggle hidden">
+            <input id="hide-romaji" type="checkbox" />
+            Hide romaji
+          </label>
+          <label>
+            Renderer:
+            <select id="renderer">
+              <option value="dom">DOM</option>
+              <option value="canvas">Canvas</option>
+            </select>
+          </label>
+          <label class="replay-speed hidden" id="replay-speed-label">
+            Speed:
+            <select id="replay-speed">
+              <option value="0.5">0.5x</option>
+              <option value="1" selected>1x</option>
+              <option value="2">2x</option>
+              <option value="4">4x</option>
+            </select>
+          </label>
+          <button id="replay" type="button" class="hidden">Replay</button>
+          <button id="restart" type="button">Restart</button>
+        </div>
+      </header>
+
+      <section id="text-container" class="typing-area"></section>
+
+      <section id="stats" class="stats"></section>
+    </main>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
