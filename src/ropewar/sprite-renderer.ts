@@ -60,6 +60,7 @@ let ctx: CanvasRenderingContext2D | null = null;
 let players: Animator[] = [];
 let ropePos = 0; // -100 to +100
 let bgImage: HTMLImageElement | null = null;
+let ropeBitmap: HTMLCanvasElement | null = null;
 let animFrameId: number | null = null;
 let lastTime = 0;
 let blueSprites: Record<string, HTMLImageElement> | null = null;
@@ -199,37 +200,17 @@ function draw(): void {
 
     // Position sprites at 80% from top (20% off the bottom)
     const ropeY = h * 0.8;
-    // Rope border (drawn first, slightly thicker)
-    ctx.strokeStyle = '#6B5540';
-    ctx.lineWidth = 6;
-    ctx.beginPath();
-    ctx.moveTo(0, ropeY);
-    ctx.lineTo(w, ropeY);
-    ctx.stroke();
-    // Rope fill
-    ctx.strokeStyle = '#8B7355';
-    ctx.lineWidth = 4;
-    ctx.beginPath();
-    ctx.moveTo(0, ropeY);
-    ctx.lineTo(w, ropeY);
-    ctx.stroke();
 
-    // Draw rope knot cluster that shifts with ropePos
-    const centerX = w / 2 + (ropePos / 100) * (w / 2 - DRAW_SIZE);
-    ctx.fillStyle = '#6B5540';
-    ctx.strokeStyle = '#4A3A2A';
-    ctx.lineWidth = 0.5;
-    const knotRadius = 7.5;
-    const knotSpacing = 10.5;
-    for (const i of [-2, 2, -1, 1, 0]) {
-        ctx.beginPath();
-        ctx.arc(centerX + i * knotSpacing, ropeY, knotRadius, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.stroke();
-    }
-
-    // Both teams shift in the direction of the rope
+    // Both rope and teams shift by the same amount
     const shift = (ropePos / 100) * (w * 0.15);
+    const centerX = w / 2 + shift;
+
+    // Draw rope SVG image
+    const ropeW = (w - 40) * 2.3;
+    const ropeH = 30;
+    if (ropeBitmap) {
+        ctx.drawImage(ropeBitmap, centerX - ropeW / 2, ropeY - ropeH / 2, ropeW, ropeH);
+    }
     const spriteY = ropeY - DRAW_SIZE / 2;
 
     // Draw team A players (left side)
@@ -298,21 +279,37 @@ export async function initSpriteRenderer(container: HTMLElement, playerList: Pla
     });
     resizeObserver.observe(container);
 
-    // Load background and all sprite sets
-    const bgPromise = new Promise<HTMLImageElement>((resolve, reject) => {
-        const img = new Image();
-        img.onload = () => resolve(img);
-        img.onerror = reject;
-        img.src = '/ropewar.png';
-    });
+    // Load background, rope, and all sprite sets
+    function loadImage(src: string): Promise<HTMLImageElement> {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.onload = () => resolve(img);
+            img.onerror = reject;
+            img.src = src;
+        });
+    }
 
-    const [bg, blueNormal, redFlip] = await Promise.all([
-        bgPromise,
+    const [bg, rope, blueNormal, redFlip] = await Promise.all([
+        loadImage('/ropewar.png'),
+        loadImage('/rope.svg'),
         loadSprites('blue', false),
         loadSprites('red', true),
     ]);
 
     bgImage = bg;
+
+    // Rasterize SVG rope to an offscreen canvas so we can stretch freely
+    const rasterW = 1600;
+    const rasterH = 60;
+    const offscreen = document.createElement('canvas');
+    offscreen.width = rasterW;
+    offscreen.height = rasterH;
+    const offCtx = offscreen.getContext('2d');
+    if (offCtx) {
+        offCtx.drawImage(rope, 0, 0, rasterW, rasterH);
+    }
+    ropeBitmap = offscreen;
+
     blueSprites = blueNormal;
     redFlipSprites = redFlip;
 
@@ -396,6 +393,7 @@ export function destroySpriteRenderer(): void {
     ctx = null;
     players = [];
     bgImage = null;
+    ropeBitmap = null;
     blueSprites = null;
     redFlipSprites = null;
     lastTime = 0;
