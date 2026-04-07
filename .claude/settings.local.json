@@ -9,7 +9,11 @@
       "Bash(cp:*)",
       "Bash(ls /mnt/data/home/projects/tyr/*.mp3 /mnt/data/home/projects/tyr/*.png)",
       "Bash(ls /mnt/data/home/projects/tyr/*.png /mnt/data/home/projects/tyr/blue_*.png /mnt/data/home/projects/tyr/red_*.png)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(mkdir -p /mnt/data/home/projects/tyr/cli)",
+      "Bash(go mod:*)",
+      "Bash(go build:*)",
+      "Bash(timeout 2 ./ropewar-cli)"
     ]
   }
 }

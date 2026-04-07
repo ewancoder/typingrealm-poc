@@ -1,0 +1,22 @@
+LinkerD features:
+- mtls / servicemesh
+- cpu config (0.5cpu)
+- retries / per endpoint config for status codes with our profiles
+
+1. Install Istio to DEV
+2. Inject Istio to one service, virtual service with retries, test that retries work
+3. Create a per-route version that Generator would produce (similar to LinkerD), test that it works
+4. Implement changes to the generator to generate necessary yaml files, test that applying them works
+5. Notify devops which files and how we should apply during deployment
+6. Test pipeline applying the Istio profile
+
+Features:
+- Retries (retry budget -> retries count), per-route
+- CPU config (0.5 -> 500m)
+
+
+
+
+
+hi, working on Istio investigation, going to talk to Alex about it today
+and probably will be finishing the planning and starting the implementation pbi today or tomorrow
